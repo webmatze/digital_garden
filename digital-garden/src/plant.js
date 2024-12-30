@@ -61,7 +61,7 @@ class Plant {
         // Calculate fade to white
         let currentColor = this.color;
         if (this.isDying) {
-            currentColor = this.fadeToWhite(this.color, this.getFadeProgress());
+            currentColor = this.fadeToTransparent(this.color, this.getFadeProgress());
         }
         
         ctx.fillStyle = currentColor;
@@ -81,17 +81,14 @@ class Plant {
         ctx.fillRect(this.x - this.width/2, this.y - this.height, this.width, this.height);
     }
 
-    fadeToWhite(color, progress) {
+    fadeToTransparent(color, progress) {
         // Handle hex colors
         if (color.startsWith('#')) {
             color = this.hexToRgb(color);
         }
         // Handle rgb colors
         const rgb = color.match(/\d+/g).map(Number);
-        return `rgb(${
-            Math.min(255, rgb[0] + (255 - rgb[0]) * progress)},${
-            Math.min(255, rgb[1] + (255 - rgb[1]) * progress)},${
-            Math.min(255, rgb[2] + (255 - rgb[2]) * progress)})`
+        return `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${1 - progress})`
     }
 
     hexToRgb(hex) {
