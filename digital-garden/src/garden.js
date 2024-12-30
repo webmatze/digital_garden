@@ -5,6 +5,7 @@ class Garden {
         this.plants = [];
         this.seeds = [];
         this.weather = new Weather();
+        this.timeSpeed = 1;
         
         // Add minimum distances for different plant types
         this.minDistances = {
@@ -47,6 +48,11 @@ class Garden {
         const plantTypes = ['grass', 'flower', 'tree'];
         let currentPlantType = 0;
 
+        document.getElementById('time-speed').addEventListener('input', (e) => {
+            this.timeSpeed = parseFloat(e.target.value);
+            document.getElementById('speed-value').textContent = `${this.timeSpeed.toFixed(1)}x`;
+        });
+
         document.getElementById('add-plant').addEventListener('click', () => {
             const x = Math.random() * this.canvas.width;
             const y = this.canvas.height;
@@ -65,36 +71,38 @@ class Garden {
     }
 
     update() {
-        this.weather.update();
-        
-        // Update existing seeds
-        this.seeds = this.seeds.map(seed => {
-            seed.delay--;
-            return seed;
-        });
-        
-        // Create new plants from ready seeds
-        const readySeeds = this.seeds.filter(seed => seed.delay <= 0);
-        readySeeds.forEach(seed => {
-            if (seed.x >= 0 && 
-                seed.x <= this.canvas.width && 
-                this.isPositionAvailable(seed.x, seed.y, this.minDistances[seed.type])) {
-                this.plants.push(new Plant(seed.x, seed.y, seed.type));
-            }
-        });
-        
-        // Keep only unready seeds
-        this.seeds = this.seeds.filter(seed => seed.delay > 0);
-        
-        // Update plants and collect new seeds
-        this.plants = this.plants.filter(plant => {
-            const newSeeds = plant.dropSeeds();
-            if (newSeeds.length > 0) {
-                console.log(`Plant at (${plant.x}, ${plant.y}) dropped ${newSeeds.length} seeds`);
-                this.seeds = this.seeds.concat(newSeeds);
-            }
-            return !plant.grow(this.weather);
-        });
+        for (let i = 0; i < this.timeSpeed; i++) {
+            this.weather.update();
+            
+            // Update existing seeds
+            this.seeds = this.seeds.map(seed => {
+                seed.delay--;
+                return seed;
+            });
+            
+            // Create new plants from ready seeds
+            const readySeeds = this.seeds.filter(seed => seed.delay <= 0);
+            readySeeds.forEach(seed => {
+                if (seed.x >= 0 && 
+                    seed.x <= this.canvas.width && 
+                    this.isPositionAvailable(seed.x, seed.y, this.minDistances[seed.type])) {
+                    this.plants.push(new Plant(seed.x, seed.y, seed.type));
+                }
+            });
+            
+            // Keep only unready seeds
+            this.seeds = this.seeds.filter(seed => seed.delay > 0);
+            
+            // Update plants and collect new seeds
+            this.plants = this.plants.filter(plant => {
+                const newSeeds = plant.dropSeeds();
+                if (newSeeds.length > 0) {
+                    console.log(`Plant at (${plant.x}, ${plant.y}) dropped ${newSeeds.length} seeds`);
+                    this.seeds = this.seeds.concat(newSeeds);
+                }
+                return !plant.grow(this.weather);
+            });
+        }
     }
 
     draw() {
