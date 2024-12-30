@@ -53,6 +53,22 @@ class Garden {
             document.getElementById('speed-value').textContent = `${this.timeSpeed.toFixed(1)}x`;
         });
 
+        // Distance sliders
+        document.getElementById('tree-distance').addEventListener('input', (e) => {
+            this.minDistances.tree = parseInt(e.target.value);
+            document.getElementById('tree-distance-value').textContent = this.minDistances.tree;
+        });
+
+        document.getElementById('flower-distance').addEventListener('input', (e) => {
+            this.minDistances.flower = parseInt(e.target.value);
+            document.getElementById('flower-distance-value').textContent = this.minDistances.flower;
+        });
+
+        document.getElementById('grass-distance').addEventListener('input', (e) => {
+            this.minDistances.grass = parseInt(e.target.value);
+            document.getElementById('grass-distance-value').textContent = this.minDistances.grass;
+        });
+
         document.getElementById('add-plant').addEventListener('click', () => {
             const x = Math.random() * this.canvas.width;
             const y = this.canvas.height;

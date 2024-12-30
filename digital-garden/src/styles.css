@@ -38,3 +38,25 @@ button {
 #speed-value {
     min-width: 30px;
 }
+
+.distance-controls {
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.distance-control {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.distance-control input[type="range"] {
+    width: 200px;
+}
+
+.distance-control span {
+    min-width: 30px;
+}
