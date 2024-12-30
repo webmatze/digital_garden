@@ -3,6 +3,7 @@ class Garden {
         this.canvas = document.getElementById('garden-canvas');
         this.ctx = this.canvas.getContext('2d');
         this.plants = [];
+        this.seeds = [];
         this.weather = new Weather();
         
         this.setupCanvas();
@@ -39,30 +40,32 @@ class Garden {
     update() {
         this.weather.update();
         
-        // Create array for new seeds
-        let newSeeds = [];
-        
-        // Update plants and collect seeds
-        this.plants = this.plants.filter(plant => {
-            const seeds = plant.dropSeeds();
-            newSeeds = newSeeds.concat(seeds);
-            return !plant.grow(this.weather);
+        // Update existing seeds
+        this.seeds = this.seeds.map(seed => {
+            seed.delay--;
+            return seed;
         });
         
-        // Add new plants from seeds that are ready to germinate
-        newSeeds.forEach(seed => {
-            if (seed.delay <= 0) {
-                // Check if the position is within canvas bounds
-                if (seed.x >= 0 && seed.x <= this.canvas.width) {
-                    this.plants.push(new Plant(seed.x, seed.y, seed.type));
-                }
-            } else {
-                seed.delay--;
+        // Create new plants from ready seeds
+        const readySeeds = this.seeds.filter(seed => seed.delay <= 0);
+        readySeeds.forEach(seed => {
+            if (seed.x >= 0 && seed.x <= this.canvas.width) {
+                this.plants.push(new Plant(seed.x, seed.y, seed.type));
             }
         });
         
-        // Keep viable seeds for next update
-        this.seeds = newSeeds.filter(seed => seed.delay > 0);
+        // Keep only unready seeds
+        this.seeds = this.seeds.filter(seed => seed.delay > 0);
+        
+        // Update plants and collect new seeds
+        this.plants = this.plants.filter(plant => {
+            const newSeeds = plant.dropSeeds();
+            if (newSeeds.length > 0) {
+                console.log(`Plant at (${plant.x}, ${plant.y}) dropped ${newSeeds.length} seeds`);
+                this.seeds = this.seeds.concat(newSeeds);
+            }
+            return !plant.grow(this.weather);
+        });
     }
 
     draw() {

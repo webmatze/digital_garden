@@ -46,6 +46,10 @@ class Plant {
         // Normal growth phase
         if (this.height < this.maxHeight && !this.isDying) {
             this.height += this.growthRate * weather.growthModifier;
+            // Add debug log when reaching maturity
+            if (this.height >= this.maxHeight * 0.95 && !this.hasDroppedSeeds) {
+                console.log(`Plant reached maturity: ${this.type}`);
+            }
         }
         
         // Start dying when reaching lifespan
@@ -53,7 +57,6 @@ class Plant {
             this.isDying = true;
         }
         
-        // Return true if the plant should be removed
         return this.isDying && this.getFadeProgress() >= 1;
     }
 
@@ -131,16 +134,21 @@ class Plant {
     dropSeeds() {
         if (this.hasDroppedSeeds) return [];
         
-        // Only drop seeds when fully grown and after random delay
-        if (this.height >= this.maxHeight * 0.95 && 
-            !this.isDying && 
-            this.age > this.seedDropDelay) {
+        // Add debug logging to check conditions
+        const isFullyGrown = this.height >= this.maxHeight * 0.95;
+        const isReadyToDrop = this.age > this.seedDropDelay;
+        
+        if (isFullyGrown && !this.isDying && isReadyToDrop) {
+            console.log(`Dropping seeds: 
+                Type: ${this.type}
+                Height: ${this.height}/${this.maxHeight}
+                Age: ${this.age}
+                Seeds: ${this.numSeeds}`);
             
             this.hasDroppedSeeds = true;
             const seeds = [];
             
             for (let i = 0; i < this.numSeeds; i++) {
-                // Calculate random position within spread radius
                 const spreadRadius = this.type === 'tree' ? 100 : 50;
                 const angle = Math.random() * Math.PI * 2;
                 const distance = Math.random() * spreadRadius;
@@ -152,7 +160,7 @@ class Plant {
                     x: seedX,
                     y: seedY,
                     type: this.type,
-                    delay: Math.random() * 1000 // Random germination delay
+                    delay: Math.floor(Math.random() * 1000) // Make sure delay is an integer
                 });
             }
             
