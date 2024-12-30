@@ -9,9 +9,9 @@ class Garden {
         
         // Add minimum distances for different plant types
         this.minDistances = {
-            tree: 100,    // Keep trees well-spaced
-            flower: 40,   // Reduce from previous value
-            grass: 30     // Reduce from previous value
+            tree: 15,    // Reduced from 100
+            flower: 9,   // Reduced from 40
+            grass: 5     // Reduced from 30
         };
         
         this.setupCanvas();
