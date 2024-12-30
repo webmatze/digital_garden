@@ -7,6 +7,8 @@ class Plant {
         this.health = 100;
         this.age = 0;
         this.isDying = false;
+        this.hasDroppedSeeds = false;
+        this.seedDropDelay = Math.random() * 500; // Random delay after reaching maturity
         
         // Set characteristics based on plant type
         switch(this.type) {
@@ -16,6 +18,7 @@ class Plant {
                 this.color = this.getRandomFlowerColor();
                 this.width = 8;
                 this.lifespan = 1000 + Math.random() * 500; // About 1000-1500 frames
+                this.numSeeds = Math.floor(2 + Math.random() * 3); // 2-4 seeds
                 break;
             case 'tree':
                 this.maxHeight = 200 * (0.85 + Math.random() * 0.3);
@@ -23,6 +26,7 @@ class Plant {
                 this.color = this.getRandomTreeColor();
                 this.width = 15 * (0.9 + Math.random() * 0.2);
                 this.lifespan = 8000 + Math.random() * 2000; // About 8000-10000 frames
+                this.numSeeds = Math.floor(3 + Math.random() * 4); // 3-6 seeds
                 break;
             case 'grass':
             default:
@@ -31,6 +35,7 @@ class Plant {
                 this.color = this.getRandomGrassColor();
                 this.width = 5;
                 this.lifespan = 2000 + Math.random() * 1000; // About 2000-3000 frames
+                this.numSeeds = Math.floor(1 + Math.random() * 2); // 1-2 seeds
                 break;
         }
     }
@@ -121,5 +126,39 @@ class Plant {
         const g = 205 + Math.floor(Math.random() * 50);
         const b = 50 + Math.floor(Math.random() * 20);
         return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    dropSeeds() {
+        if (this.hasDroppedSeeds) return [];
+        
+        // Only drop seeds when fully grown and after random delay
+        if (this.height >= this.maxHeight * 0.95 && 
+            !this.isDying && 
+            this.age > this.seedDropDelay) {
+            
+            this.hasDroppedSeeds = true;
+            const seeds = [];
+            
+            for (let i = 0; i < this.numSeeds; i++) {
+                // Calculate random position within spread radius
+                const spreadRadius = this.type === 'tree' ? 100 : 50;
+                const angle = Math.random() * Math.PI * 2;
+                const distance = Math.random() * spreadRadius;
+                
+                const seedX = this.x + Math.cos(angle) * distance;
+                const seedY = this.y;
+                
+                seeds.push({
+                    x: seedX,
+                    y: seedY,
+                    type: this.type,
+                    delay: Math.random() * 1000 // Random germination delay
+                });
+            }
+            
+            return seeds;
+        }
+        
+        return [];
     }
 }

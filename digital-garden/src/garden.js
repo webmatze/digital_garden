@@ -38,8 +38,31 @@ class Garden {
 
     update() {
         this.weather.update();
-        // Update and filter out dead plants
-        this.plants = this.plants.filter(plant => !plant.grow(this.weather));
+        
+        // Create array for new seeds
+        let newSeeds = [];
+        
+        // Update plants and collect seeds
+        this.plants = this.plants.filter(plant => {
+            const seeds = plant.dropSeeds();
+            newSeeds = newSeeds.concat(seeds);
+            return !plant.grow(this.weather);
+        });
+        
+        // Add new plants from seeds that are ready to germinate
+        newSeeds.forEach(seed => {
+            if (seed.delay <= 0) {
+                // Check if the position is within canvas bounds
+                if (seed.x >= 0 && seed.x <= this.canvas.width) {
+                    this.plants.push(new Plant(seed.x, seed.y, seed.type));
+                }
+            } else {
+                seed.delay--;
+            }
+        });
+        
+        // Keep viable seeds for next update
+        this.seeds = newSeeds.filter(seed => seed.delay > 0);
     }
 
     draw() {
