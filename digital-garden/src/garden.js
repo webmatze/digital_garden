@@ -16,10 +16,15 @@ class Garden {
     }
 
     setupEventListeners() {
+        const plantTypes = ['grass', 'flower', 'tree'];
+        let currentPlantType = 0;
+
         document.getElementById('add-plant').addEventListener('click', () => {
             const x = Math.random() * this.canvas.width;
             const y = this.canvas.height;
-            this.plants.push(new Plant(x, y));
+            this.plants.push(new Plant(x, y, plantTypes[currentPlantType]));
+            // Cycle through plant types
+            currentPlantType = (currentPlantType + 1) % plantTypes.length;
         });
 
         document.getElementById('toggle-weather').addEventListener('click', () => {
