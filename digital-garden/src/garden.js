@@ -6,6 +6,13 @@ class Garden {
         this.seeds = [];
         this.weather = new Weather();
         
+        // Add minimum distances for different plant types
+        this.minDistances = {
+            tree: 100,
+            flower: 40,
+            grass: 30
+        };
+        
         this.setupCanvas();
         this.setupEventListeners();
         this.startSimulation();
@@ -14,6 +21,16 @@ class Garden {
     setupCanvas() {
         this.canvas.width = this.canvas.offsetWidth;
         this.canvas.height = this.canvas.offsetHeight;
+    }
+
+    isPositionAvailable(x, y, minDistance = 30) {
+        return !this.plants.some(plant => {
+            const distance = Math.sqrt(
+                Math.pow(plant.x - x, 2) + 
+                Math.pow(plant.y - y, 2)
+            );
+            return distance < minDistance;
+        });
     }
 
     setupEventListeners() {
@@ -49,7 +66,9 @@ class Garden {
         // Create new plants from ready seeds
         const readySeeds = this.seeds.filter(seed => seed.delay <= 0);
         readySeeds.forEach(seed => {
-            if (seed.x >= 0 && seed.x <= this.canvas.width) {
+            if (seed.x >= 0 && 
+                seed.x <= this.canvas.width && 
+                this.isPositionAvailable(seed.x, seed.y, this.minDistances[seed.type])) {
                 this.plants.push(new Plant(seed.x, seed.y, seed.type));
             }
         });
