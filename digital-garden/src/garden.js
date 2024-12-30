@@ -43,7 +43,16 @@ class Garden {
 
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        
+        // Draw background (optional - adds a slight blue tint to the sky)
+        this.ctx.fillStyle = 'rgba(135, 206, 235, 0.2)';
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        
+        // Draw plants
         this.plants.forEach(plant => plant.draw(this.ctx));
+        
+        // Draw weather effects on top
+        this.weather.draw(this.ctx, this.canvas.width, this.canvas.height);
     }
 
     startSimulation() {
