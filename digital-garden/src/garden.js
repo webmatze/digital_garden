@@ -38,7 +38,8 @@ class Garden {
 
     update() {
         this.weather.update();
-        this.plants.forEach(plant => plant.grow(this.weather));
+        // Update and filter out dead plants
+        this.plants = this.plants.filter(plant => !plant.grow(this.weather));
     }
 
     draw() {

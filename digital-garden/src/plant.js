@@ -5,6 +5,8 @@ class Plant {
         this.type = type;
         this.height = 10;
         this.health = 100;
+        this.age = 0;
+        this.isDying = false;
         
         // Set characteristics based on plant type
         switch(this.type) {
@@ -13,12 +15,14 @@ class Plant {
                 this.growthRate = 0.15 * (0.9 + Math.random() * 0.2);
                 this.color = this.getRandomFlowerColor();
                 this.width = 8;
+                this.lifespan = 1000 + Math.random() * 500; // About 1000-1500 frames
                 break;
             case 'tree':
                 this.maxHeight = 200 * (0.85 + Math.random() * 0.3);
                 this.growthRate = 0.05 * (0.9 + Math.random() * 0.2);
                 this.color = this.getRandomTreeColor();
                 this.width = 15 * (0.9 + Math.random() * 0.2);
+                this.lifespan = 8000 + Math.random() * 2000; // About 8000-10000 frames
                 break;
             case 'grass':
             default:
@@ -26,18 +30,42 @@ class Plant {
                 this.growthRate = 0.1 * (0.9 + Math.random() * 0.2);
                 this.color = this.getRandomGrassColor();
                 this.width = 5;
+                this.lifespan = 2000 + Math.random() * 1000; // About 2000-3000 frames
                 break;
         }
     }
 
     grow(weather) {
-        if (this.height < this.maxHeight) {
+        this.age++;
+        
+        // Normal growth phase
+        if (this.height < this.maxHeight && !this.isDying) {
             this.height += this.growthRate * weather.growthModifier;
         }
+        
+        // Start dying when reaching lifespan
+        if (this.age >= this.lifespan) {
+            this.isDying = true;
+        }
+        
+        // Return true if the plant should be removed
+        return this.isDying && this.getFadeProgress() >= 1;
+    }
+
+    getFadeProgress() {
+        const fadeLength = this.lifespan * 0.2; // Fade over 20% of lifespan
+        return Math.min(1, (this.age - this.lifespan) / fadeLength);
     }
 
     draw(ctx) {
-        ctx.fillStyle = this.color;
+        // Calculate fade to white
+        let currentColor = this.color;
+        if (this.isDying) {
+            currentColor = this.fadeToWhite(this.color, this.getFadeProgress());
+        }
+        
+        ctx.fillStyle = currentColor;
+        
         if (this.type === 'flower' && this.height >= this.maxHeight * 0.8) {
             // Draw flower petals
             ctx.beginPath();
@@ -51,6 +79,26 @@ class Plant {
         }
         // Draw stem/trunk
         ctx.fillRect(this.x - this.width/2, this.y - this.height, this.width, this.height);
+    }
+
+    fadeToWhite(color, progress) {
+        // Handle hex colors
+        if (color.startsWith('#')) {
+            color = this.hexToRgb(color);
+        }
+        // Handle rgb colors
+        const rgb = color.match(/\d+/g).map(Number);
+        return `rgb(${
+            Math.min(255, rgb[0] + (255 - rgb[0]) * progress)},${
+            Math.min(255, rgb[1] + (255 - rgb[1]) * progress)},${
+            Math.min(255, rgb[2] + (255 - rgb[2]) * progress)})`
+    }
+
+    hexToRgb(hex) {
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        return `rgb(${r},${g},${b})`;
     }
 
     getRandomFlowerColor() {
