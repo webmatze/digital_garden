@@ -8,9 +8,9 @@ class Garden {
         
         // Add minimum distances for different plant types
         this.minDistances = {
-            tree: 100,
-            flower: 40,
-            grass: 30
+            tree: 100,    // Keep trees well-spaced
+            flower: 40,   // Reduce from previous value
+            grass: 30     // Reduce from previous value
         };
         
         this.setupCanvas();
@@ -25,11 +25,21 @@ class Garden {
 
     isPositionAvailable(x, y, minDistance = 30) {
         return !this.plants.some(plant => {
+            // Calculate base distance between plants
             const distance = Math.sqrt(
                 Math.pow(plant.x - x, 2) + 
                 Math.pow(plant.y - y, 2)
             );
-            return distance < minDistance;
+            
+            // Adjust minimum distance based on plant types
+            let requiredDistance = minDistance;
+            
+            // If either plant is grass, reduce the required distance
+            if (plant.type === 'grass' || plant.type === 'flower') {
+                requiredDistance *= 0.7; // Reduce minimum distance by 30%
+            }
+            
+            return distance < requiredDistance;
         });
     }
 
