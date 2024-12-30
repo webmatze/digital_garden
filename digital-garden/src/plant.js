@@ -18,7 +18,8 @@ class Plant {
                 this.color = this.getRandomFlowerColor();
                 this.width = 8;
                 this.lifespan = 1000 + Math.random() * 500; // About 1000-1500 frames
-                this.numSeeds = Math.floor(2 + Math.random() * 3); // 2-4 seeds
+                this.numSeeds = Math.floor(1 + Math.random() * 2); // 1-2 seeds
+                this.seedDropDelay = Math.random() * 1000; // Longer delay for flowers
                 break;
             case 'tree':
                 this.maxHeight = 200 * (0.85 + Math.random() * 0.3);
@@ -27,6 +28,7 @@ class Plant {
                 this.width = 15 * (0.9 + Math.random() * 0.2);
                 this.lifespan = 8000 + Math.random() * 2000; // About 8000-10000 frames
                 this.numSeeds = Math.floor(3 + Math.random() * 4); // 3-6 seeds
+                this.seedDropDelay = Math.random() * 500; // Medium delay
                 break;
             case 'grass':
             default:
@@ -35,7 +37,8 @@ class Plant {
                 this.color = this.getRandomGrassColor();
                 this.width = 5;
                 this.lifespan = 2000 + Math.random() * 1000; // About 2000-3000 frames
-                this.numSeeds = Math.floor(1 + Math.random() * 2); // 1-2 seeds
+                this.numSeeds = Math.floor(2 + Math.random() * 3); // 2-4 seeds
+                this.seedDropDelay = Math.random() * 300; // Shorter delay for grass
                 break;
         }
     }
@@ -148,8 +151,17 @@ class Plant {
             this.hasDroppedSeeds = true;
             const seeds = [];
             
+            const getSpreadRadius = (type) => {
+                switch(type) {
+                    case 'tree': return 150 + Math.random() * 50; // 150-200 units
+                    case 'flower': return 80 + Math.random() * 40; // 80-120 units
+                    case 'grass': return 60 + Math.random() * 30; // 60-90 units
+                    default: return 50;
+                }
+            };
+
             for (let i = 0; i < this.numSeeds; i++) {
-                const spreadRadius = this.type === 'tree' ? 100 : 50;
+                const spreadRadius = getSpreadRadius(this.type);
                 const angle = Math.random() * Math.PI * 2;
                 const distance = Math.random() * spreadRadius;
                 
