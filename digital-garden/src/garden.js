@@ -77,12 +77,9 @@ class Garden {
             currentPlantType = (currentPlantType + 1) % plantTypes.length;
         });
 
-        document.getElementById('toggle-weather').addEventListener('click', () => {
-            const conditions = this.weather.conditions;
-            const currentIndex = conditions.indexOf(this.weather.current);
-            const nextIndex = (currentIndex + 1) % conditions.length;
-            this.weather.current = conditions[nextIndex];
-            this.weather.updateGrowthModifier();
+        document.getElementById('clear-garden').addEventListener('click', () => {
+            this.plants = [];
+            this.seeds = [];
         });
     }
 
