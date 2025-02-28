@@ -42,11 +42,52 @@ The Digital Garden is an ongoing project with room for endless possibilities:
 
 ## 🛠 Technical Implementation
 
-Built using vanilla JavaScript, HTML5 Canvas, and CSS, the project demonstrates that beautiful, complex simulations can be created without heavy frameworks or libraries. The modular design allows for easy expansion and modification.
+Built using modern JavaScript with ES6 modules, HTML5 Canvas, and CSS. The project follows a clean architecture with separation of concerns:
+
+- **Models**: Plant, Weather, Environment, Ecosystem
+- **Controllers**: Garden, UI
+- **Configuration**: Centralized settings management
+- **Utils**: Reusable helper functions
+
+### Project Structure
+```
+src/
+├── config.js                # Centralized configuration settings
+├── utils.js                 # Utility functions
+├── main.js                  # Application entry point
+├── controllers/
+│   ├── garden-controller.js # Main garden logic controller
+│   └── ui-controller.js     # UI interaction handling
+├── models/
+│   ├── plant.js             # Base plant class
+│   ├── seed.js              # Seed management
+│   ├── weather.js           # Weather system
+│   ├── environment.js       # Environment handling
+│   ├── ecosystem.js         # Plant ecosystem
+│   ├── plant-registry.js    # Plant type registration
+│   └── specific-plants/     # Specialized plant implementations
+│       ├── tree.js
+│       ├── flower.js
+│       └── grass.js
+├── index.html               # Main HTML entry point
+└── styles.css               # CSS styling
+```
 
 ## 🌿 Get Started
 
-Simply clone the repository and open `index.html` in your browser to start your own digital garden. Watch as it grows, evolves, and creates unique patterns every time you run it.
+1. Clone the repository
+2. Open `src/index.html` in your browser or run a local server:
+   ```
+   python -m http.server
+   ```
+3. Visit http://localhost:8000/src/index.html
+
+## 🧪 Extending the Garden
+
+To add new plant types:
+1. Create a new class that extends the base Plant class
+2. Register it with the PlantRegistry
+3. Update the UI to include your new plant type
 
 ---
 
